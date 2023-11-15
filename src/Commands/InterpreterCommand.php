@@ -33,29 +33,14 @@ class InterpreterCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $term1 = rand(1, 10);
-        $term2 = rand(1, 10);
-        $result = $term1 + $term2;
-
+        
         $io = new InputOutput($input, $output);
        
-        $filename = "./src/Parses/parse.php";
-        $f = fopen($filename, 'w');
-        if (!$f) {
-            die('Error creating the file ' . $filename);
-        }
-        
-        $parse = "<?php\n";
         $name = $input->getArgument($this->commandArgumentName);
         $value = explode(" ",$name);
 
         $this->interpreter($value,$io);
-      
-        $parse .= $name;
-
-        fputs($f, $parse);
-        fclose($f);
-
+        
         return Command::SUCCESS;
     }
    
