@@ -41,7 +41,7 @@ you can execute with option code
 sch read "( + 5 8 )"
 ```
 
-or execute code form a file with .scm extention
+or execute code from a file with .scm extention
 ```
 sch read "teste.scm"
 ```
