@@ -175,10 +175,13 @@ class InterpreterCommand extends Command
         }
         echo implode(" ",$newValue), "\n";
         if(count($newValue)>3){
-          
+        
+            if($newValue===$value){
+                return $io->right("reccurent error");
+            }
             return $this->interpreter($newValue,$io);
-
-        }else{
+        }
+        else{
           
            
             return $io->right("Result : {$newValue[1]}");
