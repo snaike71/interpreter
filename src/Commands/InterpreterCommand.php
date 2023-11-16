@@ -178,13 +178,18 @@ class InterpreterCommand extends Command
             return $this->interpreter($newValue,$io);
 
         }else{
-           return $io->right("Result : {$newValue[1]}");
+            if(!is_numeric($value[$i-1])){
+                $newValue = implode(" ",$newValue);
+                return $io->right("Result : {$newValue}");
+            }else{
+                return $io->right("Result : {$newValue[1]}");
+            }
+          
         }
     }
+    //gestion des espaces des parentheses
     protected function addSpace(string $string) {
-        // Ajouter un espace avant la parenthèse ouvrante si nécessaire
         $string = preg_replace('/\(([^ ])/', '( $1', $string);
-        // Ajouter un espace après la parenthèse fermante si nécessaire
         $string = preg_replace('/([^ ])\)/', '$1 )', $string);
     
         return $string;
