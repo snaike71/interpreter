@@ -39,13 +39,28 @@ class InterpreterCommand extends Command
         $read = $input->getArgument($this->commandArgumentName);
 
         // vérifie si on cherche à lire un fichier .scm
-        if(strpos($read, ".scm" )){
+        if(strpos($read, ".scm" ) && file_exists($read)){
             $read = file_get_contents($read);
+
+        }elseif(!strpos($read,".scm") && file_exists($read)){
+            $io->wrong("need .scm extension !");
+            return Command::FAILURE;
+        }
+        elseif(strpos($read,".scm") && !file_exists($read)){
+            $io->wrong("File not found !");
+            return Command::FAILURE;
+             
         }
 
         $value = $this->addSpace($read);
         $value = explode(" ",$value);
-        $this->interpreter($value,$io);
+        try {
+            $this->interpreter($value,$io);
+        } catch (\Throwable $th) {
+            $io->wrong($th);
+            return Command::FAILURE;
+        }
+        
         
         return Command::SUCCESS;
     }
@@ -133,16 +148,15 @@ class InterpreterCommand extends Command
             return $this->interpreter($newValue,$io);
 
         }else{
-           return $io->right(sprintf("Result : {$newValue[1]}"));
+           return $io->right("Result : {$newValue[1]}");
         }
     }
-    protected function addSpace($chaine) {
+    protected function addSpace(string $string) {
         // Ajouter un espace avant la parenthèse ouvrante si nécessaire
-        $chaine = preg_replace('/\(([^ ])/', '( $1', $chaine);
+        $string = preg_replace('/\(([^ ])/', '( $1', $string);
         // Ajouter un espace après la parenthèse fermante si nécessaire
-        $chaine = preg_replace('/([^ ])\)/', '$1 )', $chaine);
+        $string = preg_replace('/([^ ])\)/', '$1 )', $string);
     
-        return $chaine;
-    }
-    
+        return $string;
+    }   
 }
