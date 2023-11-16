@@ -32,7 +32,7 @@ php bin/sch read "teste.scm"
 
 ### install package
 ```
-composer global require snaik/interpreter:dev-main
+composer global require snaik/interpreter:v0.1.0
 ```
 ### execute
 
