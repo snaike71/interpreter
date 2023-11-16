@@ -106,17 +106,18 @@ class InterpreterCommand extends Command
                 $modulo = true;
             }
             // limite l'interpreteur 
-            if( $value[$i]!=="("
-            &&  $value[$i]!==")"
-            &&  $value[$i]!=="/"
-            &&  $value[$i]!=="modulo"
-            &&  $value[$i]!=="*"
-            &&  $value[$i]!=="+"
-            &&  $value[$i]!=="-"
-            &&  !is_numeric($value[$i])
-            ){
-                return $io->wrong("SchemeError: unknown identifier: {$value[$i]}, index: {$number}");
-            }
+            // if( $value[$i]!=="("
+            // &&  $value[$i]!==")"
+            // &&  $value[$i]!=="/"
+            // &&  $value[$i]!=="modulo"
+            // &&  $value[$i]!=="*"
+            // &&  $value[$i]!=="+"
+            // &&  $value[$i]!=="-"
+            // &&  $value[$i]!==" "
+            // &&  !is_numeric($value[$i])
+            // ){
+            //     return $io->wrong("SchemeError: unknown identifier: {$value[$i]}, index: {$number}");
+            // }
             if(($addition|| $soustraction|| $multiplication || $division || $modulo) && $value[$i]===")"){
                 if(($division ||$modulo) && $number!==3){
                     $arguments = $number-1;
@@ -178,12 +179,10 @@ class InterpreterCommand extends Command
             return $this->interpreter($newValue,$io);
 
         }else{
-            if(!is_numeric($value[$i-1])){
-                $newValue = implode(" ",$newValue);
-                return $io->right("Result : {$newValue}");
-            }else{
-                return $io->right("Result : {$newValue[1]}");
-            }
+          
+           
+            return $io->right("Result : {$newValue[1]}");
+            
           
         }
     }
