@@ -6,6 +6,7 @@ use Snaik\Interpreter\Services\InputOutput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InterpreterCommand extends Command
@@ -15,8 +16,8 @@ class InterpreterCommand extends Command
     protected $commandName = 'read';
     protected $commandDescription = "read scheme langage";
 
-    protected $commandArgumentName = "nae";
-    protected $commandArgumentDescription = "interpret?";
+    protected $commandArgumentName = "scheme";
+    protected $commandArgumentDescription = "scheme to interprete";
 
     protected function configure()
     {
@@ -36,9 +37,15 @@ class InterpreterCommand extends Command
         
         $io = new InputOutput($input, $output);
        
-        $name = $input->getArgument($this->commandArgumentName);
-        $value = explode(" ",$name);
+        $read = $input->getArgument($this->commandArgumentName);
 
+        // vérifie si on cherche à lire un fichier .scm
+        if(strpos($read, ".scm" )){
+            $read = file_get_contents($read);
+        }
+
+        $value = $this->ajouterEspacesAutourParentheses($read);
+        $value = explode(" ",$value);
         $this->interpreter($value,$io);
         
         return Command::SUCCESS;
@@ -52,11 +59,15 @@ class InterpreterCommand extends Command
         $soustraction = false;
         $multiplication = false;
         $division = false;
+        $modulo = false;
         $result = 0;
         $number= 0;
-       
+
         for($i=1 ; $i<=count($value)-1;$i++){
-           
+            if(is_numeric($value[$i]) && $value[$i-1]==="("){
+                $number++;
+                return $io->wrong("SchemeError: Cannot call {$value[$i]}, index: {$number}");
+            }
             if($value[$i]==="+"){
                 $addition = true;
             }
@@ -69,10 +80,13 @@ class InterpreterCommand extends Command
             if($value[$i]==="/"){
                 $division = true;
             }
-            if(($addition|| $soustraction|| $multiplication || $division) && $value[$i]===")"){
-                if($division && $number!==3){
+            if($value[$i]==="modulo"){
+                $modulo = true;
+            }
+            if(($addition|| $soustraction|| $multiplication || $division || $modulo) && $value[$i]===")"){
+                if(($division ||$modulo) && $number!==3){
                     $arguments = $number-1;
-                    return $io->wrong("Expected 2 arguments, got {$arguments}");
+                    return $io->wrong("SchemeError: Expected 2 arguments, got {$arguments}, index: {$number}");
                 }
                 array_splice($newValue, $i-$number ,$number+1,strval($result));
                 break;
@@ -81,6 +95,7 @@ class InterpreterCommand extends Command
                 $soustraction = false;
                 $multiplication = false;
                 $division = false;
+                $modulo = false;
                 $result = 0;
                 $number=0;
             }elseif($addition && $value[$i]!=="+"){
@@ -98,16 +113,18 @@ class InterpreterCommand extends Command
                 }
                 $result = $result *  intval($value[$i]);
                 
-            }elseif($division && $value[$i]!="/"){
-                if($value[$i-1]!=="/" && intval($value[$i]===0)){
-                    return $io->wrong("Division by 0");
+            }elseif($division && $value[$i]!=="/"){
+                if($value[$i-1]!=="/" && intval($value[$i])===0){
+                    return $io->wrong("SchemeError: Division by 0, index: {$number}");
                 }
                 if($value[$i-1]==="/"){
                     $result += intval($value[$i]);
                 }else{
                     $result = $result /  intval($value[$i]);
-                }
-               
+                } 
+            }
+            elseif($modulo && $value[$i]!=="modulo"){
+                $result = $result % intval($value[$i]);
             }
             $number++;
         }
@@ -120,4 +137,13 @@ class InterpreterCommand extends Command
            return $io->right("Result : {$newValue[1]}");
         }
     }
+    protected function ajouterEspacesAutourParentheses($chaine) {
+        // Ajouter un espace avant la parenthèse ouvrante si nécessaire
+        $chaine = preg_replace('/\(([^ ])/', '( $1', $chaine);
+        // Ajouter un espace après la parenthèse fermante si nécessaire
+        $chaine = preg_replace('/([^ ])\)/', '$1 )', $chaine);
+    
+        return $chaine;
+    }
+    
 }
