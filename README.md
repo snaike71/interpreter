@@ -2,8 +2,8 @@
 
 ## prerequisites
 
-1) php
-2) composer
+1)  php : "^8.0"
+2)  symfony/console: "^6.3"
 
 ## Installation Local
 
@@ -32,7 +32,7 @@ php bin/sch read "teste.scm"
 
 ### install package
 ```
-composer global require snaik/interpreter:v0.1.0
+composer global require snaik/interpreter:dev-main
 ```
 ### execute
 
