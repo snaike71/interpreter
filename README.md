@@ -12,7 +12,7 @@
 
 ```
 git clone https://github.com/snaike71/interpreter.git
-cd Interpeter
+cd Interpreter
 composer i
 ```
 

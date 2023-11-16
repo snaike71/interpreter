@@ -6,7 +6,6 @@ use Snaik\Interpreter\Services\InputOutput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InterpreterCommand extends Command
@@ -44,7 +43,7 @@ class InterpreterCommand extends Command
             $read = file_get_contents($read);
         }
 
-        $value = $this->ajouterEspacesAutourParentheses($read);
+        $value = $this->addSpace($read);
         $value = explode(" ",$value);
         $this->interpreter($value,$io);
         
@@ -128,16 +127,16 @@ class InterpreterCommand extends Command
             }
             $number++;
         }
-        
+        echo implode(" ",$newValue), "\n";
         if(count($newValue)>3){
-            echo implode(" ",$newValue), "\n";
+          
             return $this->interpreter($newValue,$io);
 
         }else{
-           return $io->right("Result : {$newValue[1]}");
+           return $io->right(sprintf("Result : {$newValue[1]}"));
         }
     }
-    protected function ajouterEspacesAutourParentheses($chaine) {
+    protected function addSpace($chaine) {
         // Ajouter un espace avant la parenthèse ouvrante si nécessaire
         $chaine = preg_replace('/\(([^ ])/', '( $1', $chaine);
         // Ajouter un espace après la parenthèse fermante si nécessaire

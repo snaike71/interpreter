@@ -18,5 +18,8 @@
     },
     "bin": [
         "bin/sch"
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^10.4"
+    }
 }
