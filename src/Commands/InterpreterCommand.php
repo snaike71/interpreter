@@ -155,9 +155,7 @@ class InterpreterCommand extends Command
                     }
                 }else{
                     $result = $result *  intval($value[$i]);
-                }
-                
-                
+                }    
             }elseif($division){
                 if($value[$i-1]!=="/" && intval($value[$i])===0){
                     return $io->wrong("SchemeError: Division by 0, index: {$number}");
@@ -175,18 +173,13 @@ class InterpreterCommand extends Command
         }
         echo implode(" ",$newValue), "\n";
         if(count($newValue)>3){
-        
             if($newValue===$value){
-                return $io->right("reccurent error");
+                return $io->wrong("reccurent error");
             }
             return $this->interpreter($newValue,$io);
         }
         else{
-          
-           
             return $io->right("Result : {$newValue[1]}");
-            
-          
         }
     }
     //gestion des espaces des parentheses
